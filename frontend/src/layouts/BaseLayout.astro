@@ -1,0 +1,75 @@
+---
+import "@/styles/global.css";
+
+type Props = {
+  title?: string;
+  showHeader?: boolean;
+};
+const { title = "", showHeader = true } = Astro.props;
+
+const siteTitle = title === "" ? "Shopping List" : `${title} | Shopping List`;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="preload"
+      href="/fonts/inter-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/inter-600.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <title>{siteTitle}</title>
+    <meta
+      name="description"
+      content="A simple CRUD application for managing a shopping list."
+    />
+    <link rel="canonical" href={Astro.url} />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" sizes="32x32" href="/favicons/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicons/favicon.svg" />
+    <link
+      rel="apple-touch-icon"
+      type="image/png"
+      href="/favicons/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="/favicons/manifest.webmanifest" />
+  </head>
+  <body
+    class="flex flex-col min-h-dvh bg-white font-sans tracking-tight text-black overflow-x-clip"
+  >
+    {
+      showHeader ? (
+        <header class="max-w-xl w-full mx-auto p-8 pt-20">
+          <h1 class="text-lg font-semibold">Shopping List</h1>
+        </header>
+      ) : null
+    }
+    <main class="grow max-w-xl w-full mx-auto px-8">
+      <slot />
+    </main>
+    <footer class="max-w-xl w-full mx-auto p-8 pt-12">
+      <p class="text-sm text-gray-600 text-center">
+        &copy; 2025 by
+        <a
+          class="font-semibold text-blue-600 underline-offset-2 hover:underline"
+          href="https://timschneider.xyz"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Tim Schneider
+        </a>
+      </p>
+    </footer>
+  </body>
+</html>

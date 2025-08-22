@@ -1,0 +1,37 @@
+{
+  "name": "frontend",
+  "description": "A simple CRUD application for managing a shopping list. - Frontend",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "author": {
+    "name": "Tim Schneider",
+    "twitter": "@timschneiderxyz",
+    "email": "timschneider.xyz@gmail.com",
+    "url": "https://timschneider.xyz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:timschneiderxyz/crud-app-shopping-list.git"
+  },
+  "scripts": {
+    "astro": "astro",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.3.0",
+    "astro": "^5.12.3",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.525.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.11"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "root",
+  "description": "A simple CRUD application for managing a shopping list.",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "author": {
+    "name": "Tim Schneider",
+    "twitter": "@timschneiderxyz",
+    "email": "timschneider.xyz@gmail.com",
+    "url": "https://timschneider.xyz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:timschneiderxyz/crud-app-shopping-list.git"
+  },
+  "scripts": {
+    "dev": "pnpm --filter frontend --filter backend dev",
+    "build": "pnpm --filter frontend --filter backend build",
+    "format": "biome format --write",
+    "lint": "biome lint --write",
+    "check": "biome check --write"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.2"
+  }
+}
