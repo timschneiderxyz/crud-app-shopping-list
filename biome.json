@@ -23,6 +23,9 @@
   },
   "linter": {
     "rules": {
+      "correctness": {
+        "useUniqueElementIds": "off"
+      },
       "style": {
         "noNestedTernary": "error",
         "useCollapsedElseIf": "error",

@@ -1,8 +1,172 @@
+/*  ========================================================================
+    # Frontend - Components - Shopping List
+    ========================================================================  */
+
+import { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
+import { Plus as PlusIcon, Check as CheckIcon, Trash2 as TrashIcon } from 'lucide-react';
+import clsx from 'clsx';
+
+type ShoppingItem = {
+  _id: string;
+  name: string;
+  bought: boolean;
+};
+
 const ShoppingList = () => {
+  const API_URL = 'http://localhost:3000/items';
+  const [items, setItems] = useState<ShoppingItem[]>([]);
+  const [newItemName, setNewItemName] = useState('');
+
+  /**
+   * Initial fetch of shopping list items.
+   */
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        setItems(data);
+      } catch (error) {
+        // biome-ignore lint/suspicious/noConsole: Client logging
+        console.log('Failed to fetch items:', error);
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  /**
+   * Add a new item to the shopping list.
+   */
+  const addItem = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!newItemName.trim()) return;
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: newItemName.trim() })
+      });
+      const newItem = await response.json();
+      setItems([newItem, ...items]);
+      setNewItemName('');
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Client logging
+      console.log('Failed to add item:', error);
+    }
+  };
+
+  /**
+   * Toggle the "bought" status of an item.
+   */
+  const toggleBought = async (id: string, bought: boolean) => {
+    try {
+      await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ bought: !bought })
+      });
+      setItems(items.map(item => (id === item._id ? { ...item, bought: !item.bought } : item)));
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Client logging
+      console.log('Failed to update item:', error);
+    }
+  };
+
+  /**
+   * Delete an item from the shopping list.
+   */
+  const deleteItem = async (id: string) => {
+    try {
+      await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE'
+      });
+      setItems(items.filter(item => id !== item._id));
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Client logging
+      console.log('Failed to delete item:', error);
+    }
+  };
+
   return (
-    <div className="">
-      <div className="">Hello from React!</div>
-    </div>
+    <>
+      <form className="flex flex-col gap-6" onSubmit={addItem}>
+        <div className="flex flex-col gap-3">
+          <label htmlFor="add-new-item-input" className="text-sm font-semibold leading-none">
+            Add new item
+          </label>
+          <input
+            id="add-new-item-input"
+            type="text"
+            value={newItemName}
+            placeholder="e.g. butter"
+            onChange={e => setNewItemName(e.target.value)}
+            className="w-full h-9 px-3 py-1 bg-transparent border border-gray-200 rounded-md outline-none shadow-xs text-sm transition-[color,box-shadow] placeholder:text-gray-400 focus-visible:border-gray-400 focus-visible:ring-[3px] focus-visible:ring-gray-400/50"
+          />
+        </div>
+        <button
+          type="submit"
+          className="inline-flex justify-center items-center gap-2 h-9 px-4 bg-blue-600 rounded-md outline-none shadow-xs text-sm font-semibold text-white whitespace-nowrap transition-color cursor-pointer hover:bg-blue-600/90"
+        >
+          Add
+          <PlusIcon className="pointer-events-none" size={16} />
+        </button>
+      </form>
+      {items.length > 0 ? (
+        <ul className="flex flex-col gap-3 mt-8">
+          {items.map(item => (
+            <li
+              key={item._id}
+              className="flex justify-between gap-6 p-2 border border-gray-200 rounded-md shadow-xs"
+            >
+              <label
+                htmlFor={`item-${item._id}-checkbox`}
+                className="flex-1 flex gap-3 cursor-pointer"
+              >
+                <input
+                  id={`item-${item._id}-checkbox`}
+                  type="checkbox"
+                  checked={item.bought}
+                  onChange={() => toggleBought(item._id, item.bought)}
+                  className="hidden"
+                />
+                <div
+                  className={clsx(
+                    'inline-flex justify-center items-center size-9 rounded-md outline-none shadow-xs text-white transition-color cursor-pointer',
+                    item.bought ? 'bg-blue-600' : 'bg-gray-200'
+                  )}
+                >
+                  <CheckIcon className="pointer-events-none" size={16} />
+                </div>
+                <p
+                  className={clsx('flex-1', {
+                    'text-gray-400 line-through': item.bought
+                  })}
+                >
+                  {item.name}
+                </p>
+              </label>
+              <button
+                type="button"
+                aria-label={`Delete ${item.name}`}
+                onClick={() => deleteItem(item._id)}
+                className="inline-flex justify-center items-center size-9 bg-red-600 rounded-md outline-none shadow-xs text-white transition-color cursor-pointer hover:bg-red-600/90"
+              >
+                <TrashIcon className="pointer-events-none" size={16} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-8 text-gray-600 text-center">No items.</p>
+      )}
+    </>
   );
 };
 

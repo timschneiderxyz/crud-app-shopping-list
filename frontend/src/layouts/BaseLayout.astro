@@ -50,15 +50,15 @@ const siteTitle = title === "" ? "Shopping List" : `${title} | Shopping List`;
   >
     {
       showHeader ? (
-        <header class="max-w-xl w-full mx-auto p-8 pt-20">
+        <header class="max-w-xl w-full mx-auto pt-20 pb-8 px-4">
           <h1 class="text-lg font-semibold">Shopping List</h1>
         </header>
       ) : null
     }
-    <main class="grow max-w-xl w-full mx-auto px-8">
+    <main class="grow max-w-xl w-full mx-auto px-4">
       <slot />
     </main>
-    <footer class="max-w-xl w-full mx-auto p-8 pt-12">
+    <footer class="max-w-xl w-full mx-auto pt-12 pb-8 px-4">
       <p class="text-sm text-gray-600 text-center">
         &copy; 2025 by
         <a
