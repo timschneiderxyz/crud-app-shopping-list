@@ -2,6 +2,7 @@
     # Frontend - Components - Shopping List
     ========================================================================  */
 
+import { BACKEND_URL } from 'astro:env/client';
 import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { Plus as PlusIcon, Check as CheckIcon, Trash2 as TrashIcon } from 'lucide-react';
@@ -14,27 +15,33 @@ type ShoppingItem = {
 };
 
 const ShoppingList = () => {
-  const API_URL = 'http://localhost:3000/items';
+  const itemsApiEndpoint = `${BACKEND_URL}/items`;
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [newItemName, setNewItemName] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   /**
    * Initial fetch of shopping list items.
    */
   useEffect(() => {
-    const fetchItems = async () => {
+    const fetchAllItems = async () => {
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch(itemsApiEndpoint);
+        if (!response.ok) throw new Error('Failed to fetch items.');
         const data = await response.json();
         setItems(data);
       } catch (error) {
+        setError('Failed to fetch items. Please try again later.');
         // biome-ignore lint/suspicious/noConsole: Client logging
         console.log('Failed to fetch items:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchItems();
-  }, []);
+    fetchAllItems();
+  }, [itemsApiEndpoint]);
 
   /**
    * Add a new item to the shopping list.
@@ -44,17 +51,20 @@ const ShoppingList = () => {
     if (!newItemName.trim()) return;
 
     try {
-      const response = await fetch(API_URL, {
+      setError(null);
+      const response = await fetch(itemsApiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ name: newItemName.trim() })
       });
+      if (!response.ok) throw new Error('Failed to add item.');
       const newItem = await response.json();
       setItems([newItem, ...items]);
       setNewItemName('');
     } catch (error) {
+      setError('Failed to add item. Please try again later.');
       // biome-ignore lint/suspicious/noConsole: Client logging
       console.log('Failed to add item:', error);
     }
@@ -65,15 +75,18 @@ const ShoppingList = () => {
    */
   const toggleBought = async (id: string, bought: boolean) => {
     try {
-      await fetch(`${API_URL}/${id}`, {
+      setError(null);
+      const response = await fetch(`${itemsApiEndpoint}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ bought: !bought })
       });
+      if (!response.ok) throw new Error('Failed to update item.');
       setItems(items.map(item => (id === item._id ? { ...item, bought: !item.bought } : item)));
     } catch (error) {
+      setError('Failed to update item. Please try again later.');
       // biome-ignore lint/suspicious/noConsole: Client logging
       console.log('Failed to update item:', error);
     }
@@ -84,11 +97,14 @@ const ShoppingList = () => {
    */
   const deleteItem = async (id: string) => {
     try {
-      await fetch(`${API_URL}/${id}`, {
+      setError(null);
+      const response = await fetch(`${itemsApiEndpoint}/${id}`, {
         method: 'DELETE'
       });
+      if (!response.ok) throw new Error('Failed to delete item.');
       setItems(items.filter(item => id !== item._id));
     } catch (error) {
+      setError('Failed to delete item. Please try again later.');
       // biome-ignore lint/suspicious/noConsole: Client logging
       console.log('Failed to delete item:', error);
     }
@@ -118,7 +134,12 @@ const ShoppingList = () => {
           <PlusIcon className="pointer-events-none" size={16} />
         </button>
       </form>
-      {items.length > 0 ? (
+      {error ? (
+        <div className="mt-8 p-4 bg-red-50 rounded-md text-sm text-red-600" role="alert">
+          <strong>Error:</strong> {error}
+        </div>
+      ) : null}
+      {!isLoading && items.length > 0 ? (
         <ul className="flex flex-col gap-3 mt-8">
           {items.map(item => (
             <li
@@ -163,9 +184,11 @@ const ShoppingList = () => {
             </li>
           ))}
         </ul>
-      ) : (
+      ) : null}
+      {!isLoading && items.length === 0 ? (
         <p className="mt-8 text-gray-600 text-center">No items.</p>
-      )}
+      ) : null}
+      {isLoading ? <p className="mt-8 text-gray-600 text-center">Loading items...</p> : null}
     </>
   );
 };
