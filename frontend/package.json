@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "description": "A simple CRUD application for managing a shopping list. - Frontend",
+  "description": "A modern CRUD app to manage your shopping list. - Frontend",
   "version": "1.0.0",
   "license": "Apache-2.0",
   "private": true,

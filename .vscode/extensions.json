@@ -2,9 +2,9 @@
   "recommendations": [
     "astro-build.astro-vscode",
     "biomejs.biome",
-    "ms-azuretools.vscode-containers",
+    "bradlc.vscode-tailwindcss",
     "editorconfig.editorconfig",
-    "yoavbls.pretty-ts-errors",
-    "bradlc.vscode-tailwindcss"
+    "ms-azuretools.vscode-containers",
+    "yoavbls.pretty-ts-errors"
   ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "root",
-  "description": "A simple CRUD application for managing a shopping list.",
+  "description": "A modern CRUD app to manage your shopping list.",
   "version": "1.0.0",
   "license": "Apache-2.0",
   "private": true,
